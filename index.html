@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InforMeda - Notificações Push</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #f8f9fa;
+      margin: 0;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .icon {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: #1a73e8;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #5f6368;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    button {
+      background-color: #1a73e8;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: 500;
+      width: 100%;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #1557b0;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .status {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #1e8e3e;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <img src="https://cdn-icons-png.flaticon.com/512/625/625597.png" alt="InforMeda Logo" class="icon">
+    <h1>InforMeda Alertas</h1>
+    <p>Ative as notificações para receber alertas e mensagens do seu contabilista diretamente no telemóvel.</p>
+
+    <!-- URL do Script gerado deve ser colado aqui -->
+    <input type="text" id="nifInput" placeholder="O seu NIF (opcional para associar)"
+      style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;">
+    <button id="enablePush">Ativar Notificações</button>
+    <div id="statusMessage" class="status"></div>
+  </div>
+
+  <script>
+    // Configuração VAPID - Substitua pela sua PUBLIC_VAPID_KEY
+    const PUBLIC_VAPID_KEY = 'BPKQ2E11rrKbBz_XFy6Nz0Wt5k7nsF02TMZtBY7N3zZMoVZNweYkFSkdYpqJkyUNEPV3qFdwfijVpbS6-b6UnkU';
+    // Substitua pelo URL do seu Google Apps Script (Executar)
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxUdF-hIxhNYyu1ovFxQs3RJlSbrGq0fi25d0dU4zdLvwNrvWo3etBVnSgR9k5vwoa8/exec';
+
+    const btn = document.getElementById('enablePush');
+    const statusMsg = document.getElementById('statusMessage');
+
+    function urlBase64ToUint8Array(base64String) {
+      const padding = '='.repeat((4 - base64String.length % 4) % 4);
+      const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+      const rawData = window.atob(base64);
+      const outputArray = new Uint8Array(rawData.length);
+      for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+      }
+      return outputArray;
+    }
+
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(function (swReg) {
+          console.log('Service Worker Registado', swReg);
+
+          btn.addEventListener('click', function () {
+            btn.disabled = true;
+            btn.innerText = "A pedir permissão...";
+
+            Notification.requestPermission().then(function (permission) {
+              if (permission !== 'granted') {
+                btn.disabled = false;
+                btn.innerText = "Ativar Notificações";
+                statusMsg.innerText = "Permissão negada.";
+                statusMsg.style.color = "red";
+                return;
+              }
+
+              const subscribeOptions = {
+                userVisibleOnly: true,
+                // ISTO ESTÁ CORRETO (Não mexa nesta linha!)
+                applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
+              };
+
+              swReg.pushManager.subscribe(subscribeOptions).then(function (pushSubscription) {
+                console.log('Recebido PushSubscription: ', JSON.stringify(pushSubscription));
+
+                const nif = document.getElementById('nifInput').value.trim();
+
+                // Enviar a Subscrição para o Google Apps Script
+                fetch(APPS_SCRIPT_URL + "?action=saveSubscription" + (nif ? "&pcCode=" + nif : ""), {
+                  method: 'POST',
+                  body: JSON.stringify(pushSubscription),
+                }).then(res => res.json())
+                  .then(data => {
+                    if (data.ok) {
+                      statusMsg.innerText = "Notificações ativadas com sucesso!";
+                      btn.innerText = "Ativado";
+                    } else {
+                      statusMsg.innerText = "Erro ao guardar subscrição no servidor.";
+                      btn.disabled = false;
+                      btn.innerText = "Tentar Novamente";
+                    }
+                  }).catch(err => {
+                    statusMsg.innerText = "Erro de rede ao contactar servidor.";
+                    btn.disabled = false;
+                    btn.innerText = "Tentar Novamente";
+                  });
+
+              }).catch(function (err) {
+                console.error('Falha ao subscrever: ', err);
+                btn.disabled = false;
+                btn.innerText = "Ativar Notificações";
+              });
+            });
+          });
+        })
+        .catch(function (error) {
+          console.error('Erro de Service Worker', error);
+        });
+    } else {
+      btn.innerText = "Push Não Suportado";
+      btn.disabled = true;
+    }
+  </script>
+</body>
+
+</html>
