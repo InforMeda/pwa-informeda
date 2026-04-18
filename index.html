@@ -273,11 +273,10 @@
       } else {
         nifStatusDiv.innerHTML = `
   <div class="nif-info">
-    <span class="material-icons">assignment_ind</span>
-    <span>NIF associado:</span>
-    <span>${currentNif}</span>
+    <span class="material-icons">help_outline</span>
+    <span>NIF não identificado</span>
   </div>
-  <button class="change-nif" id="changeNifBtn">❌ Alterar NIF</button>
+  <button class="change-nif" id="askNifBtn">➕ Inserir NIF</button>
 `;
         const askBtn = document.getElementById('askNifBtn');
         if (askBtn) {
