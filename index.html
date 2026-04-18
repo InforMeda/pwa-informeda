@@ -196,7 +196,7 @@
       </div>
 
       <button id="enablePush">
-        <span class="material-icons">assignment_ind</span>
+        <span class="material-icons">notifications_active</span>
         Ativar Notificações
       </button>
       <div id="statusMessage" class="status info" style="display: none;"></div>
@@ -256,7 +256,7 @@
       if (currentNif) {
         nifStatusDiv.innerHTML = `
           <div class="nif-info">
-            <span class="material-icons">badge</span>
+            <span class="material-icons">assignment_ind</span>
             <span>NIF associado:</span>
             <span>${currentNif}</span>
           </div>
@@ -272,12 +272,12 @@
         }
       } else {
         nifStatusDiv.innerHTML = `
-  <div class="nif-info">
-    <span class="material-icons">help_outline</span>
-    <span>NIF não identificado</span>
-  </div>
-  <button class="change-nif" id="askNifBtn">➕ Inserir NIF</button>
-`;
+          <div class="nif-info">
+            <span class="material-icons">error_outline</span>
+            <span>NIF não identificado</span>
+          </div>
+          <button class="change-nif" id="askNifBtn">➕ Inserir NIF</button>
+        `;
         const askBtn = document.getElementById('askNifBtn');
         if (askBtn) {
           askBtn.addEventListener('click', () => {
