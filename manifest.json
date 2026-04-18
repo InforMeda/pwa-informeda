@@ -7,12 +7,12 @@
   "theme_color": "#1a73e8",
   "icons": [
     {
-      "src": "icons/pinto192.png",
+      "src": "https://informeda.github.io/pwa-informeda/icons/pinto192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "icons/pinto512.png",
+      "src": "https://informeda.github.io/pwa-informeda/icons/pinto512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
