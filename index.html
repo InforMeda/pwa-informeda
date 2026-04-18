@@ -91,91 +91,117 @@
     <div id="statusMessage" class="status"></div>
   </div>
 
-  <script>
-    // Configuração VAPID - Substitua pela sua PUBLIC_VAPID_KEY
-    const PUBLIC_VAPID_KEY = 'BPKQ2E11rrKbBz_XFy6Nz0Wt5k7nsF02TMZtBY7N3zZMoVZNweYkFSkdYpqJkyUNEPV3qFdwfijVpbS6-b6UnkU';
-    // Substitua pelo URL do seu Google Apps Script (Executar)
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwvenOJMXErbVjqxGMCjAoa6V0K0IQqa71ah0-ncC42VX7fJqTcv6N9P6zfiZ3QM2Dt/exec';
+ <script>
+  const PUBLIC_VAPID_KEY = 'BPKQ2E11rrKbBz_XFy6Nz0Wt5k7nsF02TMZtBY7N3zZMoVZNweYkFSkdYpqJkyUNEPV3qFdwfijVpbS6-b6UnkU';
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwvenOJMXErbVjqxGMCjAoa6V0K0IQqa71ah0-ncC42VX7fJqTcv6N9P6zfiZ3QM2Dt/exec';
 
-    const btn = document.getElementById('enablePush');
-    const statusMsg = document.getElementById('statusMessage');
+  const btn = document.getElementById('enablePush');
+  const statusMsg = document.getElementById('statusMessage');
+  const nifInput = document.getElementById('nifInput');
 
-    function urlBase64ToUint8Array(base64String) {
-      const padding = '='.repeat((4 - base64String.length % 4) % 4);
-      const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
-      const rawData = window.atob(base64);
-      const outputArray = new Uint8Array(rawData.length);
-      for (let i = 0; i < rawData.length; ++i) {
-        outputArray[i] = rawData.charCodeAt(i);
-      }
-      return outputArray;
+  // Carregar NIF guardado
+  const savedNif = localStorage.getItem('informeda_nif');
+  if (savedNif) {
+    nifInput.value = savedNif;
+    nifInput.disabled = true;
+    // Adicionar um pequeno botão ou texto para permitir alterar
+    const alterarLink = document.createElement('small');
+    alterarLink.textContent = ' ❌ Não é o seu NIF? Clique para alterar';
+    alterarLink.style.cursor = 'pointer';
+    alterarLink.style.color = '#1a73e8';
+    alterarLink.style.display = 'block';
+    alterarLink.style.marginTop = '5px';
+    alterarLink.onclick = () => {
+      nifInput.disabled = false;
+      nifInput.focus();
+      alterarLink.remove();
+    };
+    nifInput.parentNode.insertBefore(alterarLink, nifInput.nextSibling);
+  }
+
+  function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i);
     }
+    return outputArray;
+  }
 
-    if ('serviceWorker' in navigator && 'PushManager' in window) {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(function (swReg) {
-          console.log('Service Worker Registado', swReg);
+  if ('serviceWorker' in navigator && 'PushManager' in window) {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(function (swReg) {
+        console.log('Service Worker Registado', swReg);
 
-          btn.addEventListener('click', function () {
-            btn.disabled = true;
-            btn.innerText = "A pedir permissão...";
+        btn.addEventListener('click', function () {
+          const nif = nifInput.value.trim();
+          if (!nif) {
+            statusMsg.innerText = "Por favor, insira o seu NIF.";
+            statusMsg.style.color = "red";
+            return;
+          }
 
-            Notification.requestPermission().then(function (permission) {
-              if (permission !== 'granted') {
-                btn.disabled = false;
-                btn.innerText = "Ativar Notificações";
-                statusMsg.innerText = "Permissão negada.";
-                statusMsg.style.color = "red";
-                return;
-              }
+          btn.disabled = true;
+          btn.innerText = "A pedir permissão...";
 
-              const subscribeOptions = {
-                userVisibleOnly: true,
-                // ISTO ESTÁ CORRETO (Não mexa nesta linha!)
-                applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
-              };
+          Notification.requestPermission().then(function (permission) {
+            if (permission !== 'granted') {
+              btn.disabled = false;
+              btn.innerText = "Ativar Notificações";
+              statusMsg.innerText = "Permissão negada.";
+              statusMsg.style.color = "red";
+              return;
+            }
 
-              swReg.pushManager.subscribe(subscribeOptions).then(function (pushSubscription) {
-                console.log('Recebido PushSubscription: ', JSON.stringify(pushSubscription));
+            const subscribeOptions = {
+              userVisibleOnly: true,
+              applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
+            };
 
-                const nif = document.getElementById('nifInput').value.trim();
+            swReg.pushManager.subscribe(subscribeOptions).then(function (pushSubscription) {
+              console.log('PushSubscription: ', JSON.stringify(pushSubscription));
 
-                // Enviar a Subscrição para o Google Apps Script
-                fetch(APPS_SCRIPT_URL + "?action=saveSubscription" + (nif ? "&pcCode=" + nif : ""), {
-                  method: 'POST',
-                  body: JSON.stringify(pushSubscription),
-                }).then(res => res.json())
-                  .then(data => {
-                    if (data.ok) {
-                      statusMsg.innerText = "Notificações ativadas com sucesso!";
-                      btn.innerText = "Ativado";
-                    } else {
-                      statusMsg.innerText = "Erro ao guardar subscrição no servidor.";
-                      btn.disabled = false;
-                      btn.innerText = "Tentar Novamente";
-                    }
-                  }).catch(err => {
-                    statusMsg.innerText = "Erro de rede ao contactar servidor.";
+              fetch(APPS_SCRIPT_URL + "?action=saveSubscription&pcCode=" + encodeURIComponent(nif), {
+                method: 'POST',
+                body: JSON.stringify(pushSubscription),
+              }).then(res => res.json())
+                .then(data => {
+                  if (data.ok) {
+                    // Guardar NIF no localStorage
+                    localStorage.setItem('informeda_nif', nif);
+                    statusMsg.innerText = "Notificações ativadas com sucesso!";
+                    btn.innerText = "Ativado";
+                    // Recarregar a página para mostrar o NIF bloqueado
+                    location.reload();
+                  } else {
+                    statusMsg.innerText = "Erro ao guardar subscrição no servidor.";
                     btn.disabled = false;
                     btn.innerText = "Tentar Novamente";
-                  });
+                  }
+                }).catch(err => {
+                  statusMsg.innerText = "Erro de rede ao contactar servidor.";
+                  btn.disabled = false;
+                  btn.innerText = "Tentar Novamente";
+                });
 
-              }).catch(function (err) {
-                console.error('Falha ao subscrever: ', err);
-                btn.disabled = false;
-                btn.innerText = "Ativar Notificações";
-              });
+            }).catch(function (err) {
+              console.error('Falha ao subscrever: ', err);
+              btn.disabled = false;
+              btn.innerText = "Ativar Notificações";
             });
           });
-        })
-        .catch(function (error) {
-          console.error('Erro de Service Worker', error);
         });
-    } else {
-      btn.innerText = "Push Não Suportado";
-      btn.disabled = true;
-    }
-  </script>
+      })
+      .catch(function (error) {
+        console.error('Erro de Service Worker', error);
+      });
+  } else {
+    btn.innerText = "Push Não Suportado";
+    btn.disabled = true;
+  }
+</script>
 </body>
 
 </html>
