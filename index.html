@@ -272,12 +272,13 @@
         }
       } else {
         nifStatusDiv.innerHTML = `
-          <div class="nif-info">
-            <span class="material-icons">error_outline</span>
-            <span>NIF não identificado</span>
-          </div>
-          <button class="change-nif" id="askNifBtn">➕ Inserir NIF</button>
-        `;
+  <div class="nif-info">
+    <span class="material-icons">assignment_ind</span>
+    <span>NIF associado:</span>
+    <span>${currentNif}</span>
+  </div>
+  <button class="change-nif" id="changeNifBtn">❌ Alterar NIF</button>
+`;
         const askBtn = document.getElementById('askNifBtn');
         if (askBtn) {
           askBtn.addEventListener('click', () => {
