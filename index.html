@@ -3,205 +3,433 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>InforMeda - Notificações Push</title>
   <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="icons/pinto192.png">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Roboto', sans-serif;
+      background-color: #f1f5f9;
+      margin: 0;
+      padding: 16px;
+      min-height: 100vh;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      background-color: #f8f9fa;
-      margin: 0;
     }
 
     .card {
+      max-width: 480px;
+      width: 100%;
+      margin: 0 auto;
       background: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-radius: 32px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+      padding: 32px 24px;
       text-align: center;
-      max-width: 400px;
-      width: 90%;
+      color: white;
     }
 
-    .icon {
-      width: 80px;
-      height: 80px;
-      margin-bottom: 20px;
+    .card-header img {
+      width: 72px;
+      height: 72px;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
     }
 
-    h1 {
+    .card-header h1 {
+      font-size: 1.75rem;
+      font-weight: 500;
+      margin: 0 0 8px 0;
+    }
+
+    .card-header p {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      margin: 0;
+    }
+
+    .card-content {
+      padding: 32px 24px;
+    }
+
+    .nif-status {
+      background: #eef2ff;
+      border-radius: 20px;
+      padding: 16px 20px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .nif-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 500;
+      color: #1e40af;
+    }
+
+    .nif-info .material-icons {
       font-size: 24px;
-      color: #1a73e8;
-      margin-bottom: 10px;
     }
 
-    p {
-      color: #5f6368;
-      line-height: 1.5;
-      margin-bottom: 24px;
+    .nif-info span:last-child {
+      font-family: monospace;
+      font-size: 1.2rem;
+      letter-spacing: 0.5px;
+    }
+
+    .change-nif {
+      background: none;
+      border: none;
+      color: #1a73e8;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 6px 12px;
+      border-radius: 40px;
+      transition: background 0.2s;
+    }
+
+    .change-nif:hover {
+      background: #e0e7ff;
     }
 
     button {
       background-color: #1a73e8;
       color: white;
       border: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
+      padding: 14px 24px;
+      border-radius: 48px;
+      font-size: 1rem;
       font-weight: 500;
+      cursor: pointer;
       width: 100%;
-      transition: background-color 0.3s;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-family: inherit;
     }
 
-    button:hover {
+    button:hover:not(:disabled) {
       background-color: #1557b0;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 12px rgba(26, 115, 232, 0.25);
     }
 
     button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
+      background-color: #b0bec5;
+      cursor: default;
+      opacity: 0.7;
     }
 
     .status {
-      margin-top: 15px;
-      font-size: 14px;
-      color: #1e8e3e;
+      margin-top: 20px;
+      font-size: 0.85rem;
+      text-align: center;
       font-weight: 500;
+      padding: 10px;
+      border-radius: 40px;
+    }
+
+    .status.success {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .status.error {
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    .status.info {
+      background: #e3f2fd;
+      color: #1565c0;
+    }
+
+    hr {
+      margin: 24px 0 16px;
+      border: none;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .footer-note {
+      font-size: 0.7rem;
+      text-align: center;
+      color: #64748b;
+      margin-top: 20px;
     }
   </style>
 </head>
 
 <body>
   <div class="card">
-    <img src="icons/pinto192.png" alt="InforMeda Logo" class="icon">
-    <h1>InforMeda Alertas</h1>
-    <p>Ative as notificações para receber alertas e mensagens do seu contabilista diretamente no telemóvel.</p>
+    <div class="card-header">
+      <img src="icons/pinto192.png" alt="InforMeda Logo">
+      <h1>Notificações InforMeda</h1>
+      <p>Receba alertas e mensagens do seu contabilista</p>
+    </div>
 
-    <!-- URL do Script gerado deve ser colado aqui -->
-    <input type="text" id="nifInput" placeholder="O seu NIF (opcional para associar)"
-      style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;">
-    <button id="enablePush">Ativar Notificações</button>
-    <div id="statusMessage" class="status"></div>
+    <div class="card-content">
+      <div id="nifStatus" class="nif-status">
+        <!-- preenchido por JS -->
+      </div>
+
+      <button id="enablePush">
+        <span class="material-icons">notifications_active</span>
+        Ativar Notificações
+      </button>
+      <div id="statusMessage" class="status info" style="display: none;"></div>
+      <div class="footer-note">
+        As notificações serão enviadas apenas para o NIF indicado acima.
+      </div>
+    </div>
   </div>
 
- <script>
-  const PUBLIC_VAPID_KEY = 'BPKQ2E11rrKbBz_XFy6Nz0Wt5k7nsF02TMZtBY7N3zZMoVZNweYkFSkdYpqJkyUNEPV3qFdwfijVpbS6-b6UnkU';
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwvenOJMXErbVjqxGMCjAoa6V0K0IQqa71ah0-ncC42VX7fJqTcv6N9P6zfiZ3QM2Dt/exec';
+  <script>
+    // --------------------------------------------------------------
+    // CONFIGURAÇÕES
+    const PUBLIC_VAPID_KEY = 'BPKQ2E11rrKbBz_XFy6Nz0Wt5k7nsF02TMZtBY7N3zZMoVZNweYkFSkdYpqJkyUNEPV3qFdwfijVpbS6-b6UnkU';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwvenOJMXErbVjqxGMCjAoa6V0K0IQqa71ah0-ncC42VX7fJqTcv6N9P6zfiZ3QM2Dt/exec';
 
-  const btn = document.getElementById('enablePush');
-  const statusMsg = document.getElementById('statusMessage');
-  const nifInput = document.getElementById('nifInput');
+    // Elementos DOM
+    const btn = document.getElementById('enablePush');
+    const statusDiv = document.getElementById('statusMessage');
+    const nifStatusDiv = document.getElementById('nifStatus');
 
-  // Carregar NIF guardado
-  const savedNif = localStorage.getItem('informeda_nif');
-  if (savedNif) {
-    nifInput.value = savedNif;
-    nifInput.disabled = true;
-    // Adicionar um pequeno botão ou texto para permitir alterar
-    const alterarLink = document.createElement('small');
-    alterarLink.textContent = ' ❌ Não é o seu NIF? Clique para alterar';
-    alterarLink.style.cursor = 'pointer';
-    alterarLink.style.color = '#1a73e8';
-    alterarLink.style.display = 'block';
-    alterarLink.style.marginTop = '5px';
-    alterarLink.onclick = () => {
-      nifInput.disabled = false;
-      nifInput.focus();
-      alterarLink.remove();
-    };
-    nifInput.parentNode.insertBefore(alterarLink, nifInput.nextSibling);
-  }
-
-  function urlBase64ToUint8Array(base64String) {
-    const padding = '='.repeat((4 - base64String.length % 4) % 4);
-    const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
-    const rawData = window.atob(base64);
-    const outputArray = new Uint8Array(rawData.length);
-    for (let i = 0; i < rawData.length; ++i) {
-      outputArray[i] = rawData.charCodeAt(i);
+    // --------------------------------------------------------------
+    // AUXILIARES
+    function showStatus(message, type = 'info') {
+      statusDiv.textContent = message;
+      statusDiv.className = `status ${type}`;
+      statusDiv.style.display = 'block';
+      setTimeout(() => {
+        if (statusDiv.style.display !== 'none') {
+          statusDiv.style.display = 'none';
+        }
+      }, 4000);
     }
-    return outputArray;
-  }
 
-  if ('serviceWorker' in navigator && 'PushManager' in window) {
-    navigator.serviceWorker.register('service-worker.js')
-      .then(function (swReg) {
-        console.log('Service Worker Registado', swReg);
+    function getParameterByName(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
 
-        btn.addEventListener('click', function () {
-          const nif = nifInput.value.trim();
-          if (!nif) {
-            statusMsg.innerText = "Por favor, insira o seu NIF.";
-            statusMsg.style.color = "red";
-            return;
+    // --------------------------------------------------------------
+    // LÓGICA DO NIF (URL > localStorage)
+    let currentNif = '';
+    const urlNif = getParameterByName('nif');
+    const savedNif = localStorage.getItem('informeda_nif');
+
+    if (urlNif) {
+      currentNif = urlNif;
+      if (savedNif !== urlNif) {
+        localStorage.removeItem('informeda_nif');
+      }
+    } else if (savedNif) {
+      currentNif = savedNif;
+    }
+
+    // --------------------------------------------------------------
+    // RENDERIZA O STATUS DO NIF NA INTERFACE
+    function renderNifStatus() {
+      if (currentNif) {
+        nifStatusDiv.innerHTML = `
+          <div class="nif-info">
+            <span class="material-icons">badge</span>
+            <span>NIF associado:</span>
+            <span>${currentNif}</span>
+          </div>
+          <button class="change-nif" id="changeNifBtn">❌ Alterar NIF</button>
+        `;
+        const changeBtn = document.getElementById('changeNifBtn');
+        if (changeBtn) {
+          changeBtn.addEventListener('click', () => {
+            // Remove o NIF guardado e recarrega a página sem parâmetro
+            localStorage.removeItem('informeda_nif');
+            window.location.href = window.location.pathname;  // remove query string
+          });
+        }
+      } else {
+        nifStatusDiv.innerHTML = `
+          <div class="nif-info">
+            <span class="material-icons">error_outline</span>
+            <span>NIF não identificado</span>
+          </div>
+          <button class="change-nif" id="askNifBtn">➕ Inserir NIF</button>
+        `;
+        const askBtn = document.getElementById('askNifBtn');
+        if (askBtn) {
+          askBtn.addEventListener('click', () => {
+            let newNif = prompt('Por favor, insira o seu NIF (apenas números):');
+            if (newNif && /^\d{9}$/.test(newNif.trim())) {
+              currentNif = newNif.trim();
+              localStorage.setItem('informeda_nif', currentNif);
+              renderNifStatus();   // actualiza interface
+              // Opcional: verificar se já existe subscrição para este NIF
+              checkExistingSubscription();
+            } else if (newNif) {
+              alert('NIF inválido. Deve conter 9 dígitos.');
+            }
+          });
+        }
+      }
+    }
+
+    // --------------------------------------------------------------
+    // VERIFICA SE O NIF ACTUAL JÁ TEM SUBSCRIÇÃO (opcional, apenas feedback)
+    async function checkExistingSubscription() {
+      if (!currentNif) return;
+      try {
+        const response = await fetch(`${APPS_SCRIPT_URL}?action=getSubscriptions&pcCode=${currentNif}`);
+        const data = await response.json();
+        if (data.ok && data.subscriptions && data.subscriptions.length > 0) {
+          // Já existe subscrição, podemos desabilitar botão e mostrar mensagem
+          btn.disabled = true;
+          btn.innerHTML = '<span class="material-icons">check_circle</span> Notificações Ativas';
+          showStatus(`Este dispositivo já está registado para o NIF ${currentNif}.`, 'success');
+        } else {
+          btn.disabled = false;
+          btn.innerHTML = '<span class="material-icons">notifications_active</span> Ativar Notificações';
+        }
+      } catch (err) {
+        console.warn('Não foi possível verificar subscrição existente', err);
+        btn.disabled = false;
+      }
+    }
+
+    // --------------------------------------------------------------
+    // FUNÇÕES DE WEB PUSH
+    function urlBase64ToUint8Array(base64String) {
+      const padding = '='.repeat((4 - base64String.length % 4) % 4);
+      const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+      const rawData = window.atob(base64);
+      const outputArray = new Uint8Array(rawData.length);
+      for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+      }
+      return outputArray;
+    }
+
+    async function subscribeUser(swReg) {
+      const subscribeOptions = {
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
+      };
+      return swReg.pushManager.subscribe(subscribeOptions);
+    }
+
+    async function sendSubscriptionToServer(subscription, nif) {
+      const response = await fetch(`${APPS_SCRIPT_URL}?action=saveSubscription&pcCode=${encodeURIComponent(nif)}`, {
+        method: 'POST',
+        body: JSON.stringify(subscription),
+      });
+      return response.json();
+    }
+
+    // --------------------------------------------------------------
+    // FLUXO PRINCIPAL
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(async function (swReg) {
+          console.log('Service Worker registado');
+
+          // Verifica se já está subscrito
+          const existingSubscription = await swReg.pushManager.getSubscription();
+          if (existingSubscription && currentNif) {
+            // Opcional: verificar se o NIF corresponde ao que está no servidor
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-icons">check_circle</span> Notificações Ativas';
+            showStatus(`Notificações já activas para o NIF ${currentNif}.`, 'success');
           }
 
-          btn.disabled = true;
-          btn.innerText = "A pedir permissão...";
-
-          Notification.requestPermission().then(function (permission) {
-            if (permission !== 'granted') {
-              btn.disabled = false;
-              btn.innerText = "Ativar Notificações";
-              statusMsg.innerText = "Permissão negada.";
-              statusMsg.style.color = "red";
+          // Evento do botão
+          btn.addEventListener('click', async () => {
+            if (!currentNif) {
+              showStatus('Por favor, defina o seu NIF clicando em "Inserir NIF".', 'error');
               return;
             }
 
-            const subscribeOptions = {
-              userVisibleOnly: true,
-              applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
-            };
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-icons">hourglass_empty</span> A processar...';
 
-            swReg.pushManager.subscribe(subscribeOptions).then(function (pushSubscription) {
-              console.log('PushSubscription: ', JSON.stringify(pushSubscription));
+            try {
+              // Pedir permissão
+              const permission = await Notification.requestPermission();
+              if (permission !== 'granted') {
+                showStatus('Permissão negada. Não será possível enviar notificações.', 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<span class="material-icons">notifications_active</span> Ativar Notificações';
+                return;
+              }
 
-              fetch(APPS_SCRIPT_URL + "?action=saveSubscription&pcCode=" + encodeURIComponent(nif), {
-                method: 'POST',
-                body: JSON.stringify(pushSubscription),
-              }).then(res => res.json())
-                .then(data => {
-                  if (data.ok) {
-                    // Guardar NIF no localStorage
-                    localStorage.setItem('informeda_nif', nif);
-                    statusMsg.innerText = "Notificações ativadas com sucesso!";
-                    btn.innerText = "Ativado";
-                    // Recarregar a página para mostrar o NIF bloqueado
-                    location.reload();
-                  } else {
-                    statusMsg.innerText = "Erro ao guardar subscrição no servidor.";
-                    btn.disabled = false;
-                    btn.innerText = "Tentar Novamente";
-                  }
-                }).catch(err => {
-                  statusMsg.innerText = "Erro de rede ao contactar servidor.";
-                  btn.disabled = false;
-                  btn.innerText = "Tentar Novamente";
-                });
+              // Subscrever
+              const pushSubscription = await subscribeUser(swReg);
+              console.log('PushSubscription obtida:', pushSubscription);
 
-            }).catch(function (err) {
-              console.error('Falha ao subscrever: ', err);
+              // Guardar no servidor
+              const result = await sendSubscriptionToServer(pushSubscription, currentNif);
+              if (result.ok) {
+                localStorage.setItem('informeda_nif', currentNif);
+                // Limpa parâmetro ?nif= da URL para não recriar o ciclo
+                if (urlNif) {
+                  window.history.replaceState({}, document.title, window.location.pathname);
+                }
+                showStatus(`Notificações activadas com sucesso para o NIF ${currentNif}!`, 'success');
+                btn.disabled = true;
+                btn.innerHTML = '<span class="material-icons">check_circle</span> Ativado';
+              } else {
+                showStatus('Erro ao guardar subscrição no servidor. Tente novamente.', 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<span class="material-icons">notifications_active</span> Ativar Notificações';
+              }
+            } catch (err) {
+              console.error('Falha no processo de subscrição:', err);
+              showStatus('Erro técnico. Verifique a consola para mais detalhes.', 'error');
               btn.disabled = false;
-              btn.innerText = "Ativar Notificações";
-            });
+              btn.innerHTML = '<span class="material-icons">notifications_active</span> Ativar Notificações';
+            }
           });
+        })
+        .catch(function (error) {
+          console.error('Erro ao registar Service Worker:', error);
+          showStatus('Service Worker não suportado ou erro no registo.', 'error');
+          btn.disabled = true;
         });
-      })
-      .catch(function (error) {
-        console.error('Erro de Service Worker', error);
-      });
-  } else {
-    btn.innerText = "Push Não Suportado";
-    btn.disabled = true;
-  }
-</script>
+    } else {
+      btn.disabled = true;
+      btn.innerText = "Push Não Suportado";
+      showStatus('O seu navegador não suporta notificações push.', 'error');
+    }
+
+    // Inicializa interface e verifica subscrição existente
+    renderNifStatus();
+    if (currentNif) {
+      checkExistingSubscription();
+    } else {
+      btn.disabled = false;  // Permite inserir NIF primeiro
+    }
+  </script>
 </body>
 
 </html>
