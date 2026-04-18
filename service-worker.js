@@ -3,8 +3,8 @@ self.addEventListener('push', function(event) {
   let title = 'Novo Alerta InforMeda';
   let options = {
     body: 'Tem uma nova notificação do seu contabilista.',
-    icon: 'https://cdn-icons-png.flaticon.com/512/625/625597.png',
-    badge: 'https://cdn-icons-png.flaticon.com/512/625/625597.png',
+    icon: 'https://informeda.github.io/pwa-informeda/icons/pinto512.png',
+    badge: 'https://informeda.github.io/pwa-informeda/icons/pinto512.png',
     vibrate: [200, 100, 200]
   };
 
