@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -10,7 +11,10 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Roboto', sans-serif;
       background: #f1f5f9;
@@ -21,330 +25,416 @@
       align-items: center;
       justify-content: center;
     }
+
     .card {
-      max-width: 480px; width: 100%; background: white;
-      border-radius: 32px; box-shadow: 0 12px 28px rgba(0,0,0,0.08); overflow: hidden;
+      max-width: 480px;
+      width: 100%;
+      background: white;
+      border-radius: 32px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
     }
+
     .card-header {
       background: linear-gradient(135deg, #1a73e8, #0d47a1);
-      padding: 28px 24px; text-align: center; color: white;
+      padding: 28px 24px;
+      text-align: center;
+      color: white;
     }
-    .card-header img { width: 64px; height: 64px; margin-bottom: 12px; }
-    .card-header h1 { font-size: 1.5rem; font-weight: 500; margin: 0; }
-    .card-header p { opacity: 0.9; margin: 4px 0 0; }
-    .card-content { padding: 24px; }
-    .step { display: none; }
-    .step.active { display: block; }
-    .input-group { margin-bottom: 16px; }
-    .input-group label { display: block; font-weight: 500; color: #475569; margin-bottom: 4px; font-size: 0.9rem; }
+
+    .card-header img {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 12px;
+    }
+
+    .card-header h1 {
+      font-size: 1.5rem;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    .card-header p {
+      opacity: 0.9;
+      margin: 4px 0 0;
+    }
+
+    .card-content {
+      padding: 24px;
+    }
+
+    .step {
+      display: none;
+    }
+
+    .step.active {
+      display: block;
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+    }
+
+    .input-group label {
+      display: block;
+      font-weight: 500;
+      color: #475569;
+      margin-bottom: 4px;
+      font-size: 0.9rem;
+    }
+
     .input-group input {
-      width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 16px;
-      font-size: 1rem; font-family: inherit;
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 16px;
+      font-size: 1rem;
+      font-family: inherit;
     }
+
     .btn {
-      background: #1a73e8; color: white; border: none; padding: 12px 20px; border-radius: 48px;
-      font-size: 0.95rem; font-weight: 500; cursor: pointer; width: 100%;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: #1a73e8;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 48px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       transition: all 0.2s;
     }
-    .btn:disabled { background: #b0bec5; opacity: 0.7; }
-    .status {
-      margin-top: 12px; font-size: 0.8rem; font-weight: 500; padding: 8px 12px; border-radius: 40px;
+
+    .btn:disabled {
+      background: #b0bec5;
+      opacity: 0.7;
     }
-    .status.success { background: #e8f5e9; color: #2e7d32; }
-    .status.error { background: #ffebee; color: #c62828; }
-    .status.info { background: #e3f2fd; color: #1565c0; }
+
+    .status {
+      margin-top: 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 8px 12px;
+      border-radius: 40px;
+    }
+
+    .status.success {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .status.error {
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    .status.info {
+      background: #e3f2fd;
+      color: #1565c0;
+    }
+
     .small-link {
-      display: block; margin-top: 8px; text-align: right; color: #1a73e8;
-      font-size: 0.8rem; cursor: pointer;
+      display: block;
+      margin-top: 8px;
+      text-align: right;
+      color: #1a73e8;
+      font-size: 0.8rem;
+      cursor: pointer;
     }
   </style>
 </head>
+
 <body>
-<div class="card">
-  <div class="card-header">
-    <img src="icons/pinto192.png" alt="Logo">
-    <h1>InforMeda</h1>
-    <p>Portal do Cliente</p>
+  <div class="card">
+    <div class="card-header">
+      <img src="icons/pinto192.png" alt="Logo">
+      <h1>InforMeda</h1>
+      <p>Portal do Cliente</p>
+    </div>
+    <div class="card-content">
+
+      <!-- Step 0: AutoLogin (invisível, apenas lógica) -->
+      <div id="stepAutoLogin" class="step"></div>
+
+      <!-- Step 1: NIF -->
+      <div id="stepNif" class="step active">
+        <div class="input-group">
+          <label for="nifInput">NIF (9 dígitos)</label>
+          <input type="text" id="nifInput" placeholder="Digite o seu NIF" inputmode="numeric" maxlength="9">
+        </div>
+        <button class="btn" id="btnContinueNif">
+          <span class="material-icons">arrow_forward</span> Continuar
+        </button>
+        <div id="statusNif" class="status" style="display: none;"></div>
+      </div>
+
+      <!-- Step 2: Definir senha (primeiro acesso) -->
+      <div id="stepSetPassword" class="step">
+        <p style="font-size:0.9rem; color:#475569; text-align:center;">Crie a sua senha de acesso</p>
+        <div class="input-group">
+          <label for="password1">Senha</label>
+          <input type="password" id="password1" placeholder="Mínimo 4 caracteres">
+        </div>
+        <div class="input-group">
+          <label for="password2">Confirmar senha</label>
+          <input type="password" id="password2" placeholder="Repita a senha">
+        </div>
+        <button class="btn" id="btnCreatePassword">
+          <span class="material-icons">save</span> Criar Conta
+        </button>
+        <div id="statusSetPassword" class="status" style="display: none;"></div>
+      </div>
+
+      <!-- Step 3: Login com senha -->
+      <div id="stepLogin" class="step">
+        <p style="font-size:0.9rem; color:#475569; text-align:center;">Digite a sua senha</p>
+        <div class="input-group">
+          <label for="passwordInput">Senha</label>
+          <input type="password" id="passwordInput" placeholder="Senha de acesso" autocomplete="current-password">
+        </div>
+        <button class="btn" id="btnLogin">
+          <span class="material-icons">lock_open</span> Entrar
+        </button>
+        <div id="statusLogin" class="status" style="display: none;"></div>
+      </div>
+
+      <div class="small-link" id="linkChangeNif">Alterar NIF</div>
+
+    </div>
   </div>
-  <div class="card-content">
 
-    <!-- Step 0: AutoLogin (invisível, apenas lógica) -->
-    <div id="stepAutoLogin" class="step"></div>
+  <script>
+    // Configurações
+    const PUBLIC_VAPID_KEY = 'BPKQ2E11rrKbBz_XFy6Nz0Wt5k7nsF02TMZtBY7N3zZMoVZNweYkFSkdYpqJkyUNEPV3qFdwfijVpbS6-b6UnkU';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwvenOJMXErbVjqxGMCjAoa6V0K0IQqa71ah0-ncC42VX7fJqTcv6N9P6zfiZ3QM2Dt/exec';
+    const PORTAL_URL = 'https://script.google.com/macros/s/AKfycbwvenOJMXErbVjqxGMCjAoa6V0K0IQqa71ah0-ncC42VX7fJqTcv6N9P6zfiZ3QM2Dt/exec'; // mesmo URL
 
-    <!-- Step 1: NIF -->
-    <div id="stepNif" class="step active">
-      <div class="input-group">
-        <label for="nifInput">NIF (9 dígitos)</label>
-        <input type="text" id="nifInput" placeholder="Digite o seu NIF" inputmode="numeric" maxlength="9">
-      </div>
-      <button class="btn" id="btnContinueNif">
-        <span class="material-icons">arrow_forward</span> Continuar
-      </button>
-      <div id="statusNif" class="status" style="display: none;"></div>
-    </div>
+    // Elementos DOM
+    const stepNif = document.getElementById('stepNif');
+    const stepSetPassword = document.getElementById('stepSetPassword');
+    const stepLogin = document.getElementById('stepLogin');
+    const nifInput = document.getElementById('nifInput');
+    const password1 = document.getElementById('password1');
+    const password2 = document.getElementById('password2');
+    const passwordInput = document.getElementById('passwordInput');
+    const statusNif = document.getElementById('statusNif');
+    const statusSetPassword = document.getElementById('statusSetPassword');
+    const statusLogin = document.getElementById('statusLogin');
+    const linkChangeNif = document.getElementById('linkChangeNif');
 
-    <!-- Step 2: Definir senha (primeiro acesso) -->
-    <div id="stepSetPassword" class="step">
-      <p style="font-size:0.9rem; color:#475569; text-align:center;">Crie a sua senha de acesso</p>
-      <div class="input-group">
-        <label for="password1">Senha</label>
-        <input type="password" id="password1" placeholder="Mínimo 4 caracteres">
-      </div>
-      <div class="input-group">
-        <label for="password2">Confirmar senha</label>
-        <input type="password" id="password2" placeholder="Repita a senha">
-      </div>
-      <button class="btn" id="btnCreatePassword">
-        <span class="material-icons">save</span> Criar Conta
-      </button>
-      <div id="statusSetPassword" class="status" style="display: none;"></div>
-    </div>
+    let currentNif = localStorage.getItem('informeda_nif') || '';
 
-    <!-- Step 3: Login com senha -->
-    <div id="stepLogin" class="step">
-      <p style="font-size:0.9rem; color:#475569; text-align:center;">Digite a sua senha</p>
-      <div class="input-group">
-        <label for="passwordInput">Senha</label>
-        <input type="password" id="passwordInput" placeholder="Senha de acesso" autocomplete="current-password">
-      </div>
-      <button class="btn" id="btnLogin">
-        <span class="material-icons">lock_open</span> Entrar
-      </button>
-      <div id="statusLogin" class="status" style="display: none;"></div>
-    </div>
-
-    <div class="small-link" id="linkChangeNif">Alterar NIF</div>
-
-  </div>
-</div>
-
-<script>
-  // Configurações
-  const PUBLIC_VAPID_KEY = 'BPKQ2E11rrKbBz_XFy6Nz0Wt5k7nsF02TMZtBY7N3zZMoVZNweYkFSkdYpqJkyUNEPV3qFdwfijVpbS6-b6UnkU';
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwvenOJMXErbVjqxGMCjAoa6V0K0IQqa71ah0-ncC42VX7fJqTcv6N9P6zfiZ3QM2Dt/exec';
-  const PORTAL_URL = 'https://script.google.com/macros/s/AKfycbwvenOJMXErbVjqxGMCjAoa6V0K0IQqa71ah0-ncC42VX7fJqTcv6N9P6zfiZ3QM2Dt/exec'; // mesmo URL
-
-  // Elementos DOM
-  const stepNif = document.getElementById('stepNif');
-  const stepSetPassword = document.getElementById('stepSetPassword');
-  const stepLogin = document.getElementById('stepLogin');
-  const nifInput = document.getElementById('nifInput');
-  const password1 = document.getElementById('password1');
-  const password2 = document.getElementById('password2');
-  const passwordInput = document.getElementById('passwordInput');
-  const statusNif = document.getElementById('statusNif');
-  const statusSetPassword = document.getElementById('statusSetPassword');
-  const statusLogin = document.getElementById('statusLogin');
-  const linkChangeNif = document.getElementById('linkChangeNif');
-
-  let currentNif = localStorage.getItem('informeda_nif') || '';
-
-  // Funções auxiliares
-  function show(el) { el.style.display = 'block'; el.classList.add('active'); }
-  function hide(el) { el.style.display = 'none'; el.classList.remove('active'); }
-  function setStatus(el, text, type) {
-    el.textContent = text; el.className = `status ${type}`; show(el);
-    setTimeout(() => hide(el), 5000);
-  }
-
-  async function sha256(message) {
-    const msgBuffer = new TextEncoder().encode(message);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-  }
-
-  function urlBase64ToUint8Array(base64String) {
-    const padding = '='.repeat((4 - base64String.length % 4) % 4);
-    const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
-    const rawData = window.atob(base64);
-    const outputArray = new Uint8Array(rawData.length);
-    for (let i = 0; i < rawData.length; ++i) {
-      outputArray[i] = rawData.charCodeAt(i);
+    // Funções auxiliares
+    function show(el) { el.style.display = 'block'; el.classList.add('active'); }
+    function hide(el) { el.style.display = 'none'; el.classList.remove('active'); }
+    function setStatus(el, text, type) {
+      el.textContent = text; el.className = `status ${type}`; show(el);
+      setTimeout(() => hide(el), 5000);
     }
-    return outputArray;
-  }
 
-  async function subscribeUser(swReg) {
-    const subscribeOptions = {
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
-    };
-    return swReg.pushManager.subscribe(subscribeOptions);
-  }
+    async function sha256(message) {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
 
-  async function sendSubscriptionToServer(subscription, nif) {
-    return fetch(`${APPS_SCRIPT_URL}?action=saveSubscription&pcCode=${encodeURIComponent(nif)}`, {
-      method: 'POST',
-      body: JSON.stringify(subscription),
-    });
-  }
-
-  async function registerPush(nif) {
-    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
-    try {
-      const swReg = await navigator.serviceWorker.ready;
-      let sub = await swReg.pushManager.getSubscription();
-      if (!sub) {
-        const permission = await Notification.requestPermission();
-        if (permission !== 'granted') return;
-        sub = await subscribeUser(swReg);
+    function urlBase64ToUint8Array(base64String) {
+      const padding = '='.repeat((4 - base64String.length % 4) % 4);
+      const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+      const rawData = window.atob(base64);
+      const outputArray = new Uint8Array(rawData.length);
+      for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
       }
-      await sendSubscriptionToServer(sub, nif);
-      console.log('Push registado para', nif);
-    } catch(e) {
-      console.warn('Falha ao registar push:', e);
+      return outputArray;
     }
-  }
 
-  // Redirecionar para o portal com token
-  function goToPortal(nif, token) {
-    window.location.href = `${PORTAL_URL}?pcCode=${nif}&action=obrigacoesPage&token=${token}`;
-  }
+    async function subscribeUser(swReg) {
+      const subscribeOptions = {
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
+      };
+      return swReg.pushManager.subscribe(subscribeOptions);
+    }
 
-  // Finalização comum após autenticação
-  async function completeLogin(nif) {
-    // Gera token
-    const tokenRes = await fetch(`${APPS_SCRIPT_URL}?action=generateToken`, {
-      method: 'POST',
-      body: JSON.stringify({pcCode: nif})
-    });
-    const tokenData = await tokenRes.json();
-    if (!tokenData.ok) {
-      alert('Erro ao criar sessão. Tente novamente.');
+    async function sendSubscriptionToServer(subscription, nif) {
+      return fetch(`${APPS_SCRIPT_URL}?action=saveSubscription&pcCode=${encodeURIComponent(nif)}`, {
+        method: 'POST',
+        body: JSON.stringify(subscription),
+      });
+    }
+
+    async function registerPush(nif) {
+      if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+      try {
+        const swReg = await navigator.serviceWorker.ready;
+        let sub = await swReg.pushManager.getSubscription();
+        if (!sub) {
+          const permission = await Notification.requestPermission();
+          if (permission !== 'granted') return;
+          sub = await subscribeUser(swReg);
+        }
+        await sendSubscriptionToServer(sub, nif);
+        console.log('Push registado para', nif);
+      } catch (e) {
+        console.warn('Falha ao registar push:', e);
+      }
+    }
+
+    // Redirecionar para o portal com token
+    function goToPortal(nif, token) {
+      // Inclui o token para validação no servidor
+      window.location.href = `${PORTAL_URL}?pcCode=${nif}&action=obrigacoesPage&token=${token}`;
+    }
+
+    // Finalização comum após autenticação
+    async function completeLogin(nif) {
+      // Gera token
+      const tokenRes = await fetch(`${APPS_SCRIPT_URL}?action=generateToken`, {
+        method: 'POST',
+        body: JSON.stringify({ pcCode: nif })
+      });
+      const tokenData = await tokenRes.json();
+      if (!tokenData.ok) {
+        alert('Erro ao criar sessão. Tente novamente.');
+        return false;
+      }
+      localStorage.setItem('informeda_nif', nif);
+      localStorage.setItem('auth_token', tokenData.token);
+      // Ativar notificações push
+      await registerPush(nif);
+      goToPortal(nif, tokenData.token);
+      return true;
+    }
+
+    // Valida se token existe e é válido
+    async function tryAutoLogin() {
+      const token = localStorage.getItem('auth_token');
+      if (!token || !currentNif) return false;
+      try {
+        const res = await fetch(`${APPS_SCRIPT_URL}?action=validateToken&pcCode=${currentNif}&token=${token}`);
+        const data = await res.json();
+        if (data.valid) {
+          goToPortal(currentNif, token);
+          return true;
+        } else {
+          // Token inválido, limpa
+          localStorage.removeItem('auth_token');
+        }
+      } catch (e) { console.warn('Erro ao validar token:', e); }
       return false;
     }
-    localStorage.setItem('informeda_nif', nif);
-    localStorage.setItem('auth_token', tokenData.token);
-    // Ativar notificações push
-    await registerPush(nif);
-    goToPortal(nif, tokenData.token);
-    return true;
-  }
 
-  // Valida se token existe e é válido
-  async function tryAutoLogin() {
-    const token = localStorage.getItem('auth_token');
-    if (!token || !currentNif) return false;
-    try {
-      const res = await fetch(`${APPS_SCRIPT_URL}?action=validateToken&pcCode=${currentNif}&token=${token}`);
+    // Controlo de passos
+    function showNifStep() {
+      hide(stepLogin);
+      hide(stepSetPassword);
+      show(stepNif);
+      if (currentNif) nifInput.value = currentNif;
+    }
+
+    linkChangeNif.addEventListener('click', () => {
+      localStorage.removeItem('informeda_nif');
+      localStorage.removeItem('auth_token');
+      currentNif = '';
+      showNifStep();
+    });
+
+    // --- Listeners ---
+    btnContinueNif.addEventListener('click', async () => {
+      const nif = nifInput.value.trim();
+      if (!/^\d{9}$/.test(nif)) {
+        setStatus(statusNif, 'NIF inválido (9 dígitos)', 'error');
+        return;
+      }
+      currentNif = nif;
+      // Verifica estado
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=checkNifStatus&pcCode=${nif}`);
+      const data = await res.json();
+      if (!data.valid) {
+        setStatus(statusNif, 'NIF não encontrado', 'error');
+        return;
+      }
+      if (!data.active) {
+        setStatus(statusNif, 'Conta inativa. Contacte o contabilista.', 'error');
+        return;
+      }
+      if (!data.passwordSet) {
+        // Primeiro acesso: mostrar criar senha
+        hide(stepNif);
+        show(stepSetPassword);
+      } else {
+        // Já tem senha: mostrar login
+        hide(stepNif);
+        show(stepLogin);
+      }
+    });
+
+    btnCreatePassword.addEventListener('click', async () => {
+      const pw1 = password1.value;
+      const pw2 = password2.value;
+      if (!pw1 || pw1.length < 4) {
+        setStatus(statusSetPassword, 'Mínimo 4 caracteres', 'error');
+        return;
+      }
+      if (pw1 !== pw2) {
+        setStatus(statusSetPassword, 'As senhas não coincidem', 'error');
+        return;
+      }
+      btnCreatePassword.disabled = true;
+      const hash = await sha256(pw1);
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=setPassword`, {
+        method: 'POST',
+        body: JSON.stringify({ pcCode: currentNif, passwordHash: hash })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        const ok = await completeLogin(currentNif);
+        if (!ok) {
+          btnCreatePassword.disabled = false;
+          setStatus(statusSetPassword, 'Erro ao finalizar. Tente novamente.', 'error');
+        }
+      } else {
+        btnCreatePassword.disabled = false;
+        setStatus(statusSetPassword, 'Erro ao guardar senha.', 'error');
+      }
+    });
+
+    btnLogin.addEventListener('click', async () => {
+      const pw = passwordInput.value;
+      if (!pw) {
+        setStatus(statusLogin, 'Digite a senha', 'error');
+        return;
+      }
+      btnLogin.disabled = true;
+      const hash = await sha256(pw);
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=validateCredentials&pcCode=${currentNif}&password=${hash}`);
       const data = await res.json();
       if (data.valid) {
-        goToPortal(currentNif, token);
-        return true;
+        const ok = await completeLogin(currentNif);
+        if (!ok) {
+          btnLogin.disabled = false;
+          setStatus(statusLogin, 'Erro ao criar sessão.', 'error');
+        }
       } else {
-        // Token inválido, limpa
-        localStorage.removeItem('auth_token');
-      }
-    } catch(e) { console.warn('Erro ao validar token:', e); }
-    return false;
-  }
-
-  // Controlo de passos
-  function showNifStep() {
-    hide(stepLogin);
-    hide(stepSetPassword);
-    show(stepNif);
-    if (currentNif) nifInput.value = currentNif;
-  }
-
-  linkChangeNif.addEventListener('click', () => {
-    localStorage.removeItem('informeda_nif');
-    localStorage.removeItem('auth_token');
-    currentNif = '';
-    showNifStep();
-  });
-
-  // --- Listeners ---
-  btnContinueNif.addEventListener('click', async () => {
-    const nif = nifInput.value.trim();
-    if (!/^\d{9}$/.test(nif)) {
-      setStatus(statusNif, 'NIF inválido (9 dígitos)', 'error');
-      return;
-    }
-    currentNif = nif;
-    // Verifica estado
-    const res = await fetch(`${APPS_SCRIPT_URL}?action=checkNifStatus&pcCode=${nif}`);
-    const data = await res.json();
-    if (!data.valid) {
-      setStatus(statusNif, 'NIF não encontrado', 'error');
-      return;
-    }
-    if (!data.active) {
-      setStatus(statusNif, 'Conta inativa. Contacte o contabilista.', 'error');
-      return;
-    }
-    if (!data.passwordSet) {
-      // Primeiro acesso: mostrar criar senha
-      hide(stepNif);
-      show(stepSetPassword);
-    } else {
-      // Já tem senha: mostrar login
-      hide(stepNif);
-      show(stepLogin);
-    }
-  });
-
-  btnCreatePassword.addEventListener('click', async () => {
-    const pw1 = password1.value;
-    const pw2 = password2.value;
-    if (!pw1 || pw1.length < 4) {
-      setStatus(statusSetPassword, 'Mínimo 4 caracteres', 'error');
-      return;
-    }
-    if (pw1 !== pw2) {
-      setStatus(statusSetPassword, 'As senhas não coincidem', 'error');
-      return;
-    }
-    btnCreatePassword.disabled = true;
-    const hash = await sha256(pw1);
-    const res = await fetch(`${APPS_SCRIPT_URL}?action=setPassword`, {
-      method: 'POST',
-      body: JSON.stringify({pcCode: currentNif, passwordHash: hash})
-    });
-    const data = await res.json();
-    if (data.ok) {
-      const ok = await completeLogin(currentNif);
-      if (!ok) {
-        btnCreatePassword.disabled = false;
-        setStatus(statusSetPassword, 'Erro ao finalizar. Tente novamente.', 'error');
-      }
-    } else {
-      btnCreatePassword.disabled = false;
-      setStatus(statusSetPassword, 'Erro ao guardar senha.', 'error');
-    }
-  });
-
-  btnLogin.addEventListener('click', async () => {
-    const pw = passwordInput.value;
-    if (!pw) {
-      setStatus(statusLogin, 'Digite a senha', 'error');
-      return;
-    }
-    btnLogin.disabled = true;
-    const hash = await sha256(pw);
-    const res = await fetch(`${APPS_SCRIPT_URL}?action=validateCredentials&pcCode=${currentNif}&password=${hash}`);
-    const data = await res.json();
-    if (data.valid) {
-      const ok = await completeLogin(currentNif);
-      if (!ok) {
         btnLogin.disabled = false;
-        setStatus(statusLogin, 'Erro ao criar sessão.', 'error');
+        passwordInput.value = '';
+        setStatus(statusLogin, 'Senha incorreta', 'error');
       }
-    } else {
-      btnLogin.disabled = false;
-      passwordInput.value = '';
-      setStatus(statusLogin, 'Senha incorreta', 'error');
-    }
-  });
+    });
 
-  // Inicialização
-  window.addEventListener('load', async () => {
-    const autoLogged = await tryAutoLogin();
-    if (autoLogged) return;
-    // Mostra passo NIF
-    showNifStep();
-  });
-</script>
+    // Inicialização
+    window.addEventListener('load', async () => {
+      const autoLogged = await tryAutoLogin();
+      if (autoLogged) return;
+      // Mostra passo NIF
+      showNifStep();
+    });
+  </script>
 </body>
+
 </html>
